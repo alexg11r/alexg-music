@@ -1,0 +1,9 @@
+{
+  "name": "alexg-indie-music-studio",
+  "version": "1.0.0",
+  "description": "Интерактивный авторский сайт музыканта, дискография и лаборатория демок (Night Studio Edition)",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  }
+}

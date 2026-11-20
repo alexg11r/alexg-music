@@ -1,0 +1,10 @@
+services:
+  - type: web
+    name: alexg-portfolio
+    runtime: node
+    plan: free
+    buildCommand: echo "No external build dependencies required"
+    startCommand: node server.js
+    envVars:
+      - key: NODE_ENV
+        value: production

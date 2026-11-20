@@ -1,0 +1,593 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ALEX G — Гитара, Аранжировки, Афиши и Мерч</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400;1,600&family=JetBrains+Mono:wght@300;400;500&family=Plus+Jakarta+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <!-- Subtle Analog Film Noise -->
+  <div class="noise-layer" aria-hidden="true"></div>
+
+  <!-- Minimalist Top Navigation -->
+  <header class="top-nav">
+    <a href="#hero" class="nav-brand" id="navBrandName">ALEX G</a>
+    <nav class="nav-links" aria-label="Навигация">
+      <a href="#craft">Чем занимаюсь</a>
+      <a href="#audio-archive">Демки и партии</a>
+      <a href="#visual-works">Афиши и визуал</a>
+      <a href="#about">Обо мне</a>
+      <button type="button" class="nav-upload-trigger owner-only hidden" id="openUploadModalBtn">+ Загрузить демку</button>
+      <button type="button" class="nav-upload-trigger owner-only hidden" id="openCabinetHeaderBtn">⚙ Кабинет автора</button>
+      <button type="button" class="nav-auth-btn" id="ownerAuthBtn" title="Вход для владельца сайта">🔒 Автор</button>
+    </nav>
+  </header>
+
+  <main>
+    <!-- HERO: Mysterious, Minimalist, Psychedelic Art-Rock First Screen -->
+    <section id="hero" class="hero">
+      <canvas id="psychedelicCanvas" class="hero-canvas" aria-hidden="true"></canvas>
+
+      <div class="hero-inner">
+        <div class="hero-editorial">
+          <div class="hero-coords" id="heroRoleLine">
+            ГИТАРА · СЛАЙД-ГИТАРА · АРАНЖИРОВКИ · АФИШИ & МЕРЧ
+          </div>
+
+          <h1 class="hero-display">
+            <span class="hero-display-line">ALEX</span>
+            <span class="hero-display-line hero-display-line--italic">G</span>
+          </h1>
+
+          <p class="hero-manifesto" id="heroSubtitleText">
+            В свободном плавании. Коплю авторский материал на стыке психоделии и арт-рока, пишу гитарные партии и аранжировки, создаю концертные афиши и мерч.
+          </p>
+
+          <div class="hero-actions">
+            <button type="button" class="btn-minimal btn-minimal--crimson" id="heroListenBtn">
+              <span class="btn-dot" id="heroPlayIndicator"></span>
+              <span id="heroListenBtnText">Слушать демки</span>
+            </button>
+            <a href="#visual-works" class="btn-minimal btn-minimal--outline">
+              Афиши и визуал
+            </a>
+            <button type="button" class="btn-minimal btn-minimal--sm owner-only hidden" id="editHeroQuickBtn">
+              ✎ Изменить фото и текст
+            </button>
+          </div>
+        </div>
+
+        <!-- Stylish Central Play Button on the Main Screen -->
+        <div class="hero-center-play-col">
+          <button type="button" class="hero-orb-play" id="heroCenterPlayBtn" aria-label="Воспроизвести выбранный трек">
+            <span class="orb-ring orb-ring--outer" aria-hidden="true"></span>
+            <span class="orb-ring orb-ring--inner" aria-hidden="true"></span>
+            <span class="orb-core">
+              <span class="orb-icon" id="heroCenterPlayIcon">▶</span>
+            </span>
+          </button>
+          <div class="orb-caption">
+            <span class="orb-kicker" id="heroCenterPlayKicker">ИЗБРАННЫЙ ТРЕК</span>
+            <span class="orb-track-title" id="heroCenterTrackName">затмение</span>
+          </div>
+        </div>
+
+        <!-- Enigmatic Art-Rock Visual Portal (Main Illustration + Small Portrait Photo Next To It) -->
+        <div class="hero-portal" id="heroPortal">
+          <div class="portal-geometry-ring" aria-hidden="true"></div>
+          <div class="portal-main-wrap">
+            <div class="portal-frame portal-frame--main">
+              <img src="assets/moodboard/hero-sketch.jpg" alt="Art by Rusya для нового альбома" class="portal-img" id="heroMainArt" />
+            </div>
+            <div class="portal-art-credit" id="heroArtCaptionText">
+              Art by Rusya для нового альбома
+            </div>
+          </div>
+          <div class="portal-frame portal-frame--secondary">
+            <img src="assets/moodboard/alex-guitar-bw.jpg" alt="Alex G — фото с гитарой" class="portal-img" id="heroSecondaryArt" />
+          </div>
+          <div class="portal-caption mono-small" id="heroNowPlayingCaption">
+            01 // ЗАТМЕНИЕ
+          </div>
+        </div>
+      </div>
+
+      <a href="#craft" class="scroll-whisper" aria-label="Листать вниз">
+        <span>ЛИСТАТЬ</span>
+        <span class="scroll-line"></span>
+      </a>
+    </section>
+
+    <!-- SECTION 01: ЧЕМ Я ЗАНИМАЮСЬ (Craft & Directions) -->
+    <section id="craft" class="section">
+      <div class="section-head section-head--split">
+        <div>
+          <span class="section-index">01 / НАПРАВЛЕНИЯ</span>
+          <h2 class="section-heading">Звук, аранжировки и концертный визуал</h2>
+        </div>
+        <button type="button" class="btn-minimal btn-minimal--sm owner-only hidden" id="openEditBlocksModalBtn">
+          ✎ Редактировать блоки и фото
+        </button>
+      </div>
+
+      <div class="craft-grid" id="craftGrid">
+        <!-- Populated from profile.disciplines -->
+      </div>
+    </section>
+
+    <!-- SECTION 02: AUDIO ARCHIVE (Guitar Parts, Arrangements, Raw Demos) -->
+    <section id="audio-archive" class="section">
+      <div class="section-head section-head--split">
+        <div>
+          <span class="section-index">02 / АУДИО-АРХИВ</span>
+          <h2 class="section-heading">Гитарные партии, аранжировки и демки</h2>
+        </div>
+
+        <div class="archive-controls">
+          <div class="minimal-tabs" id="trackCategoryTabs">
+            <button type="button" class="tab-link active" data-cat="all">Все</button>
+            <button type="button" class="tab-link" data-cat="guitar">Гитара и слайд</button>
+            <button type="button" class="tab-link" data-cat="arrangement">Аранжировки</button>
+            <button type="button" class="tab-link" data-cat="demo">Демки</button>
+          </div>
+          <button type="button" class="btn-minimal btn-minimal--sm owner-only hidden" id="archiveUploadBtn">
+            + Загрузить демку
+          </button>
+        </div>
+      </div>
+
+      <div class="tracks-table" id="tracksContainer">
+        <!-- Populated dynamically -->
+      </div>
+    </section>
+
+    <!-- SECTION 03: POSTERS, VISUAL ART & MERCH LOOKBOOK -->
+    <section id="visual-works" class="section">
+      <div class="section-head section-head--split">
+        <div>
+          <span class="section-index">03 / АФИШИ И ВИЗУАЛ</span>
+          <h2 class="section-heading">Концертные постеры, арт и оформление</h2>
+        </div>
+        <button type="button" class="btn-minimal btn-minimal--sm owner-only hidden" id="openAddWorkModalBtn">
+          + Добавить афишу / работу
+        </button>
+      </div>
+
+      <div class="lookbook-grid" id="worksGrid">
+        <!-- Populated dynamically with poster artworks -->
+      </div>
+    </section>
+
+    <!-- SECTION 04: ABOUT & CONTACT -->
+    <section id="about" class="section section--about">
+      <div class="about-layout">
+        <div class="about-left">
+          <span class="section-index">04 / ОБО МНЕ</span>
+          <h2 class="section-heading" id="aboutHeadingName">Alex G</h2>
+          <p class="mono-small about-city" id="aboutCityText">Ростов-на-Дону / Москва · Свободное плавание</p>
+
+          <div class="about-photo-strip">
+            <img src="assets/moodboard/alex-guitar-bw.jpg" alt="Alex G с гитарой на сцене" id="aboutPhoto1Img" />
+            <a
+              href="https://vk.ru/antistressvibe?search_track_code=095fd038Kf2oTAsl7eGQCoi1yi-6oFmNK76OT5GHdP1-TtXpnuhBYjPpsdARJzgw8LfZOLOTWZ4cqJlxhJZz12lP5euH73Z-I--Y3hctJkOf-5lq6PQH20D60yiOhW7JfE68"
+              target="_blank"
+              rel="noopener"
+              id="aboutPhoto2Link"
+              class="about-photo-link"
+              title="Перейти в группу Антистресс (VK)"
+            >
+              <img src="assets/moodboard/antistress-compromise-cover.jpg" alt="CD Антистресс — Компромисс" id="aboutPhoto2Img" />
+            </a>
+          </div>
+        </div>
+
+        <div class="about-right">
+          <p class="about-bio" id="aboutBioParagraph"></p>
+
+          <div class="about-Offers" id="aboutOffersContainer">
+            <!-- Populated dynamically from profile.offers -->
+          </div>
+
+          <div class="about-footer-row">
+            <div class="contact-links" id="aboutContactsList"></div>
+            <button type="button" class="btn-minimal btn-minimal--sm owner-only hidden" id="openEditBioModalBtn">
+              ✎ Редактировать описание и фото
+            </button>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- MINIMALIST FLOATING BOTTOM AUDIO BAR -->
+  <footer class="audio-bar" id="audioBar">
+    <div class="audio-bar-inner">
+      <div class="bar-left">
+        <button type="button" class="bar-play-btn" id="barPlayBtn" aria-label="Воспроизвести / Пауза">
+          <span id="barPlayIcon">▶</span>
+        </button>
+        <button type="button" class="bar-skip-btn" id="barNextBtn" title="Следующая запись">⏭</button>
+        <div class="bar-track-info">
+          <div class="bar-track-title" id="barTrackTitle">Красный водоворот (Slide Guitar Etude)</div>
+          <div class="bar-track-meta" id="barTrackMeta">Слайд-гитара / Психоделия · 78 BPM · Dm</div>
+        </div>
+      </div>
+
+      <div class="bar-center">
+        <span class="bar-time" id="barCurrentTime">0:00</span>
+        <div class="bar-wave-wrap" id="barWaveWrap">
+          <canvas id="barWaveCanvas" width="520" height="32"></canvas>
+          <div class="bar-pins-layer" id="barPinsLayer"></div>
+          <div class="bar-tooltip hidden" id="barTooltip"></div>
+        </div>
+        <span class="bar-time" id="barTotalTime">0:24</span>
+      </div>
+
+      <div class="bar-right">
+        <form id="barNoteForm" class="bar-note-form">
+          <input
+            type="text"
+            id="barNoteInput"
+            placeholder="Заметка к текущей секунде..."
+            aria-label="Заметка к текущей секунде"
+          />
+          <button type="submit" class="bar-note-submit" title="Оставить заметку на таймлайне">+</button>
+        </form>
+        <canvas id="barOscCanvas" width="72" height="28" title="Живой осциллограф сигнала"></canvas>
+      </div>
+    </div>
+  </footer>
+
+  <!-- MODAL 0: OWNER AUTHENTICATION (Studio Access Key) -->
+  <div class="modal-overlay hidden" id="ownerAuthModal">
+    <div class="modal-box" style="max-width:420px;">
+      <div class="modal-top">
+        <span class="section-index">ДОСТУП ВЛАДЕЛЬЦА // ALEX G</span>
+        <button type="button" class="modal-close-btn" id="closeOwnerAuthModalBtn">✕</button>
+      </div>
+      <h3 class="modal-title">Вход в кабинет автора</h3>
+      <p style="font-size:0.84rem; color:var(--text-muted); margin-bottom:18px;">
+        Обычные посетители могут только слушать записи и смотреть портфолио. Введите ключ автора, чтобы открыть Кабинет автора (смена фотографий, редактирование блоков, описания и загрузка демок).
+      </p>
+      <form id="ownerAuthForm" class="minimal-form">
+        <div class="field">
+          <label>Ключ доступа</label>
+          <input type="password" id="ownerKeyInput" placeholder="Введите пароль..." required />
+        </div>
+        <div class="modal-actions">
+          <button type="submit" class="btn-minimal btn-minimal--crimson">Войти</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- UNIFIED AUTHOR CABINET MODAL (КАБИНЕТ АВТОРА: Фото, Блоки, Описание) -->
+  <div class="modal-overlay hidden" id="authorCabinetModal">
+    <div class="modal-box modal-box--cabinet">
+      <div class="modal-top">
+        <span class="section-index">КАБИНЕТ АВТОРА // ALEX G</span>
+        <button type="button" class="modal-close-btn" id="closeCabinetModalBtn">✕</button>
+      </div>
+      <h3 class="modal-title" style="margin-bottom:14px;">Управление сайтом: фото, блоки и описание</h3>
+
+      <!-- Cabinet Tabs -->
+      <div class="cabinet-tabs" id="cabinetTabs">
+        <button type="button" class="cab-tab active" data-cabtab="hero">1. Главный экран и Фото</button>
+        <button type="button" class="cab-tab" data-cabtab="blocks">2. Блоки направлений (01)</button>
+        <button type="button" class="cab-tab" data-cabtab="about">3. Описание и «Обо мне» (04)</button>
+      </div>
+
+      <form id="authorCabinetForm" class="minimal-form">
+        <!-- TAB 1: HERO PHOTOS & TEXT -->
+        <div class="cab-pane active" id="cabPaneHero">
+          <div class="cab-photos-grid">
+            <!-- Hero Main Illustration -->
+            <div class="cab-photo-card">
+              <label class="cab-label">Главная иллюстрация (большая рамка)</label>
+              <div class="cab-photo-row">
+                <img src="assets/moodboard/hero-sketch.jpg" alt="Главная иллюстрация" id="cabHeroMainPreview" class="cab-thumb" />
+                <div class="cab-photo-controls">
+                  <input type="file" id="cabHeroMainFile" accept="image/*" hidden />
+                  <button type="button" class="btn-minimal btn-minimal--sm" id="cabHeroMainUploadBtn">Загрузить фото с диска</button>
+                  <input type="text" id="cabHeroMainUrl" class="cab-url-input" placeholder="/assets/moodboard/hero-sketch.jpg" />
+                </div>
+              </div>
+            </div>
+
+            <!-- Hero Secondary Portrait Photo -->
+            <div class="cab-photo-card">
+              <label class="cab-label">Малое фото рядом (ваше фото с гитарой)</label>
+              <div class="cab-photo-row">
+                <img src="assets/moodboard/alex-guitar-bw.jpg" alt="Малое фото" id="cabHeroSecPreview" class="cab-thumb" />
+                <div class="cab-photo-controls">
+                  <input type="file" id="cabHeroSecFile" accept="image/*" hidden />
+                  <button type="button" class="btn-minimal btn-minimal--sm" id="cabHeroSecUploadBtn">Загрузить фото с диска</button>
+                  <input type="text" id="cabHeroSecUrl" class="cab-url-input" placeholder="/assets/moodboard/alex-guitar-bw.jpg" />
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="form-grid-2">
+            <div class="field">
+              <label>Трек для центральной кнопки Play на главном экране</label>
+              <select id="cabFeaturedTrackSelect"></select>
+            </div>
+            <div class="field">
+              <label>Подпись под главным белым рисунком</label>
+              <input type="text" id="cabHeroArtCaptionInput" value="Art by Rusya для нового альбома" />
+            </div>
+          </div>
+
+          <div class="field">
+            <label>Строка направлений над заголовком</label>
+            <input type="text" id="cabRoleLineInput" placeholder="ГИТАРА · СЛАЙД-ГИТАРА · АРАНЖИРОВКИ · АФИШИ & МЕРЧ" />
+          </div>
+
+          <div class="field">
+            <label>Описание / подзаголовок на главном экране</label>
+            <textarea id="cabHeroSubtitleInput" rows="2"></textarea>
+          </div>
+        </div>
+
+        <!-- TAB 2: DIRECTION BLOCKS (Section 01) -->
+        <div class="cab-pane" id="cabPaneBlocks">
+          <p class="mono-small" style="margin-bottom:12px;">
+            Редактируйте заголовок, описание и фото каждого из трёх блоков раздела «01 / НАПРАВЛЕНИЯ»:
+          </p>
+          <div id="cabBlocksList" class="cab-blocks-list">
+            <!-- Populated dynamically with the 3 direction blocks + image uploaders -->
+          </div>
+        </div>
+
+        <!-- TAB 3: ABOUT & DESCRIPTION (Section 04) -->
+        <div class="cab-pane" id="cabPaneAbout">
+          <div class="form-grid-2">
+            <div class="field">
+              <label>Имя / Название проекта</label>
+              <input type="text" id="cabNameInput" required />
+            </div>
+            <div class="field">
+              <label>Город и статус</label>
+              <input type="text" id="cabCityInput" placeholder="Ростов-на-Дону / Москва" />
+            </div>
+          </div>
+
+          <div class="field">
+            <label>Текст «Обо мне» (биография и чем занимаетесь)</label>
+            <textarea id="cabBioInput" rows="4"></textarea>
+          </div>
+
+          <div class="cab-photos-grid">
+            <div class="cab-photo-card">
+              <label class="cab-label">Фото 1 в разделе «Обо мне»</label>
+              <div class="cab-photo-row">
+                <img src="assets/moodboard/alex-guitar-bw.jpg" alt="Фото 1" id="cabAboutPhoto1Preview" class="cab-thumb" />
+                <div class="cab-photo-controls">
+                  <input type="file" id="cabAboutPhoto1File" accept="image/*" hidden />
+                  <button type="button" class="btn-minimal btn-minimal--sm" id="cabAboutPhoto1Btn">Сменить фото 1</button>
+                  <input type="text" id="cabAboutPhoto1Url" class="cab-url-input" />
+                </div>
+              </div>
+            </div>
+
+            <div class="cab-photo-card">
+              <label class="cab-label">Фото 2 в разделе «Обо мне»</label>
+              <div class="cab-photo-row">
+                <img src="assets/moodboard/live-stage-film.jpg" alt="Фото 2" id="cabAboutPhoto2Preview" class="cab-thumb" />
+                <div class="cab-photo-controls">
+                  <input type="file" id="cabAboutPhoto2File" accept="image/*" hidden />
+                  <button type="button" class="btn-minimal btn-minimal--sm" id="cabAboutPhoto2Btn">Сменить фото 2</button>
+                  <input type="text" id="cabAboutPhoto2Url" class="cab-url-input" />
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="field">
+            <label>Пункты «Что я делаю / Услуги» в блоке «Обо мне»</label>
+            <div id="cabOffersList" style="display:flex; flex-direction:column; gap:8px;"></div>
+          </div>
+        </div>
+
+        <div class="modal-actions" style="border-top:1px solid var(--line); padding-top:16px;">
+          <button type="submit" class="btn-minimal btn-minimal--crimson" id="saveCabinetBtn">
+            Сохранить все изменения
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- MODAL 1: UPLOAD NEW DEMO / GUITAR PART (Owner Only) -->
+  <div class="modal-overlay hidden" id="uploadModal">
+    <div class="modal-box">
+      <div class="modal-top">
+        <span class="section-index">АУДИО-АРХИВ // ЗАГРУЗКА</span>
+        <button type="button" class="modal-close-btn" id="closeUploadModalBtn">✕</button>
+      </div>
+      <h3 class="modal-title">Загрузить демку или гитарную партию</h3>
+
+      <form id="uploadDemoForm" class="minimal-form">
+        <div class="upload-drop-area" id="audioDropArea">
+          <input type="file" id="audioFileInput" accept="audio/*,.mp3,.wav,.flac,.ogg,.m4a,.webm" hidden />
+          <div id="dropPromptText">
+            <p class="drop-main-text">Перетащите аудиофайл (MP3, WAV, FLAC) или <span>выберите с диска</span></p>
+            <p class="mono-small">Файл сохранится локально в папке проекта</p>
+          </div>
+          <div id="dropFileSelected" class="hidden">
+            <p class="drop-main-text" id="selectedAudioName">demo.wav</p>
+            <p class="mono-small" id="selectedAudioInfo">Звуковая волна построена</p>
+          </div>
+        </div>
+
+        <div class="mic-bar">
+          <span class="mono-small" id="micStatusLabel">Или запишите гитару / идею напрямую с микрофона:</span>
+          <button type="button" class="btn-minimal btn-minimal--sm" id="micRecordToggleBtn">● Записать с микрофона</button>
+        </div>
+
+        <div class="form-grid-2">
+          <div class="field">
+            <label>Название записи *</label>
+            <input type="text" id="demoTitleInput" placeholder="Напр.: Слайд-этюд #4 / Рифф в ре-миноре" required />
+          </div>
+          <div class="field">
+            <label>Раздел</label>
+            <select id="demoCategoryInput">
+              <option value="guitar">Гитарная партия / Слайд</option>
+              <option value="arrangement">Аранжировка</option>
+              <option value="demo">Демка / Набросок</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="form-grid-3">
+          <div class="field">
+            <label>Контекст</label>
+            <input type="text" id="demoContextInput" placeholder="Копилка материала / Этюд" />
+          </div>
+          <div class="field">
+            <label>Темп (BPM)</label>
+            <input type="number" id="demoBpmInput" value="84" min="40" max="220" />
+          </div>
+          <div class="field">
+            <label>Тональность / Строй</label>
+            <input type="text" id="demoKeyInput" value="Dm" placeholder="Dm / Drop D" />
+          </div>
+        </div>
+
+        <div class="field">
+          <label>Инструменты и цепочка звука</label>
+          <input type="text" id="demoGearInput" placeholder="Кастомный Les Paul, слайд, фузз, ленточный дилей" />
+        </div>
+
+        <div class="field">
+          <label>Заметка к записи</label>
+          <textarea id="demoNoteInput" rows="2" placeholder="О чём эта партия, какие приёмы или идеи использованы..."></textarea>
+        </div>
+
+        <div class="field">
+          <label>Обложка трека (JPG, PNG, WEBP — необязательно)</label>
+          <div class="upload-drop-area" id="demoCoverDropArea" style="padding:14px;">
+            <input type="file" id="demoCoverFileInput" accept="image/*" hidden />
+            <p class="drop-main-text" id="demoCoverFileLabel" style="font-size:0.82rem; margin:0;">
+              Нажмите или перетащите картинку для обложки трека
+            </p>
+          </div>
+        </div>
+
+        <div class="modal-actions">
+          <button type="submit" class="btn-minimal btn-minimal--crimson" id="submitDemoBtn">
+            Сохранить в архив и включить
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- MODAL 1B: CHANGE COVER ART & DETAILS FOR EXISTING TRACK (Owner Only) -->
+  <div class="modal-overlay hidden" id="changeCoverModal">
+    <div class="modal-box">
+      <div class="modal-top">
+        <span class="section-index">ОБЛОЖКА И ОПИСАНИЕ ТРЕКА</span>
+        <button type="button" class="modal-close-btn" id="closeChangeCoverModalBtn">✕</button>
+      </div>
+      <h3 class="modal-title" id="changeCoverTrackTitle">Сменить обложку</h3>
+
+      <form id="changeCoverForm" class="minimal-form">
+        <div class="cover-edit-preview-row">
+          <img src="assets/moodboard/hero-sketch.jpg" alt="Превью обложки" id="changeCoverPreviewImg" class="cover-edit-preview" />
+          <div class="upload-drop-area" id="changeCoverDropArea" style="flex:1;">
+            <input type="file" id="changeCoverFileInput" accept="image/*" hidden />
+            <p class="drop-main-text" id="changeCoverFileLabel">Загрузить свою обложку с диска <span>(выбрать файл)</span></p>
+            <p class="mono-small">JPG, PNG, WEBP</p>
+          </div>
+        </div>
+
+        <div class="field">
+          <label>Или выберите из ваших артов и афиш на сайте:</label>
+          <div class="cover-presets-grid" id="coverPresetsGrid"></div>
+        </div>
+
+        <div class="form-grid-2">
+          <div class="field">
+            <label>Название трека</label>
+            <input type="text" id="editTrackTitleInput" required />
+          </div>
+          <div class="field">
+            <label>Контекст / Подпись</label>
+            <input type="text" id="editTrackContextInput" />
+          </div>
+        </div>
+
+        <div class="field">
+          <label>Описание / Заметка к треку</label>
+          <textarea id="editTrackNoteInput" rows="2"></textarea>
+        </div>
+
+        <div class="modal-actions">
+          <button type="submit" class="btn-minimal btn-minimal--crimson" id="saveCoverBtn">
+            Сохранить обложку и трек
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- MODAL 2: ADD NEW POSTER / VISUAL WORK (Owner Only) -->
+  <div class="modal-overlay hidden" id="addWorkModal">
+    <div class="modal-box">
+      <div class="modal-top">
+        <span class="section-index">ПОРТФОЛИО // АФИШИ И ВИЗУАЛ</span>
+        <button type="button" class="modal-close-btn" id="closeAddWorkModalBtn">✕</button>
+      </div>
+      <h3 class="modal-title">Добавить афишу, постер или арт</h3>
+
+      <form id="addWorkForm" class="minimal-form">
+        <div class="upload-drop-area" id="workImageDropArea">
+          <input type="file" id="workImageInput" accept="image/*" hidden />
+          <p class="drop-main-text" id="workImageLabel">Выберите изображение (JPG, PNG, WEBP)</p>
+        </div>
+        <div class="form-grid-2">
+          <div class="field">
+            <label>Название работы *</label>
+            <input type="text" id="workTitleInput" placeholder="Напр.: Афиша фестиваля / Обложка" required />
+          </div>
+          <div class="field">
+            <label>Категория</label>
+            <input type="text" id="workCategoryInput" value="Концертная афиша" />
+          </div>
+        </div>
+        <div class="field">
+          <label>Описание</label>
+          <textarea id="workDescInput" rows="2" placeholder="Концепция, стиль или детали постера..."></textarea>
+        </div>
+        <div class="modal-actions">
+          <button type="submit" class="btn-minimal btn-minimal--crimson">Добавить в галерею</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- MODAL 5: IMAGE LIGHTBOX -->
+  <div class="modal-overlay hidden" id="lightboxModal">
+    <div class="lightbox-box">
+      <button type="button" class="modal-close-btn lightbox-close" id="closeLightboxBtn">✕</button>
+      <img src="" alt="" id="lightboxImg" class="lightbox-img" />
+      <div class="lightbox-caption">
+        <span class="mono-small" id="lightboxCat"></span>
+        <h4 id="lightboxTitle"></h4>
+        <p id="lightboxDesc"></p>
+      </div>
+    </div>
+  </div>
+
+  <div class="toast-stack" id="toastStack"></div>
+
+  <script src="app.js"></script>
+</body>
+</html>
