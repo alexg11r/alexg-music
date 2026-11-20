@@ -1627,6 +1627,52 @@ body {
   padding: 10px 16px;
 }
 
+/* Track Reordering (Owner Mode: Up/Down buttons + Drag & Drop) */
+.reorder-btn-group {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.row-reorder-btn {
+  background: transparent;
+  border: 1px solid var(--line);
+  color: var(--text-muted);
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  width: 26px;
+  height: 26px;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+}
+
+.row-reorder-btn:hover:not(:disabled) {
+  border-color: var(--crimson-bright);
+  color: var(--text);
+  background: rgba(200, 40, 41, 0.16);
+}
+
+.row-reorder-btn:disabled {
+  opacity: 0.25;
+  cursor: default;
+}
+
+.track-item[draggable="true"] .track-row {
+  cursor: grab;
+}
+
+.track-item.is-dragging {
+  opacity: 0.4;
+}
+
+.track-item.drag-over-target {
+  border-top: 2px solid var(--crimson-bright);
+  background: rgba(200, 40, 41, 0.08);
+}
+
 .hidden {
   display: none !important;
 }

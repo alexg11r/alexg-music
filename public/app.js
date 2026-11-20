@@ -579,7 +579,7 @@
           .join('');
 
         return `
-        <div class="track-item ${isCurrent ? 'is-active' : ''}" data-track-id="${t.id}">
+        <div class="track-item ${isCurrent ? 'is-active' : ''}" data-track-id="${t.id}" ${state.isOwner ? 'draggable="true"' : ''}>
           <div class="track-row">
             <button type="button" class="track-idx-btn js-play-track" data-id="${t.id}" title="Слушать / Пауза">
               ${isPlayingThis ? '❚❚' : isCurrent ? '▶' : numStr}
@@ -609,6 +609,14 @@
             </div>
 
             <div class="track-actions-cell">
+              ${
+                state.isOwner
+                  ? `<div class="reorder-btn-group">
+                      <button type="button" class="row-reorder-btn js-move-up" data-id="${t.id}" ${idx === 0 ? 'disabled' : ''} title="Поднять выше">↑</button>
+                      <button type="button" class="row-reorder-btn js-move-down" data-id="${t.id}" ${idx === filtered.length - 1 ? 'disabled' : ''} title="Опустить ниже">↓</button>
+                    </div>`
+                  : ''
+              }
               ${
                 state.isOwner
                   ? `<button type="button" class="row-expand-btn js-set-featured" data-id="${t.id}" style="${getFeaturedHeroTrack()?.id === t.id ? 'border-color:var(--crimson-bright); color:var(--parchment); background:rgba(200,40,41,0.18);' : ''}" title="Выбрать этот трек для кнопки Play на главном экране">${getFeaturedHeroTrack()?.id === t.id ? '★ На главном' : '☆ На главный'}</button>`
@@ -695,6 +703,90 @@
         openChangeCoverModal(btn.dataset.id);
       });
     });
+
+    async function persistTrackOrder() {
+      const trackIds = state.tracks.map((t) => t.id);
+      let saved = false;
+      try {
+        const res = await fetch('api/tracks-reorder', {
+          method: 'PUT',
+          headers: authHeaders({ 'Content-Type': 'application/json' }),
+          body: JSON.stringify({ trackIds })
+        });
+        if (res.ok) saved = true;
+      } catch {
+        // Static fallback
+      }
+      if (!saved) {
+        saveStaticOverride();
+      }
+      renderTracksArchive();
+      showToast('Порядок треков обновлён');
+    }
+
+    function moveTrackInList(trackId, direction) {
+      const curIdx = state.tracks.findIndex((t) => t.id === trackId);
+      if (curIdx === -1) return;
+      const targetIdx = curIdx + direction;
+      if (targetIdx < 0 || targetIdx >= state.tracks.length) return;
+      const [moved] = state.tracks.splice(curIdx, 1);
+      state.tracks.splice(targetIdx, 0, moved);
+      persistTrackOrder();
+    }
+
+    container.querySelectorAll('.js-move-up').forEach((btn) => {
+      btn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        moveTrackInList(btn.dataset.id, -1);
+      });
+    });
+
+    container.querySelectorAll('.js-move-down').forEach((btn) => {
+      btn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        moveTrackInList(btn.dataset.id, 1);
+      });
+    });
+
+    if (state.isOwner) {
+      let draggedId = null;
+      container.querySelectorAll('.track-item[draggable="true"]').forEach((item) => {
+        item.addEventListener('dragstart', (e) => {
+          draggedId = item.dataset.trackId;
+          item.classList.add('is-dragging');
+          if (e.dataTransfer) {
+            e.dataTransfer.effectAllowed = 'move';
+            e.dataTransfer.setData('text/plain', draggedId);
+          }
+        });
+        item.addEventListener('dragend', () => {
+          item.classList.remove('is-dragging');
+          container.querySelectorAll('.drag-over-target').forEach((el) => el.classList.remove('drag-over-target'));
+          draggedId = null;
+        });
+        item.addEventListener('dragover', (e) => {
+          e.preventDefault();
+          if (draggedId && draggedId !== item.dataset.trackId) {
+            item.classList.add('drag-over-target');
+          }
+        });
+        item.addEventListener('dragleave', () => {
+          item.classList.remove('drag-over-target');
+        });
+        item.addEventListener('drop', (e) => {
+          e.preventDefault();
+          item.classList.remove('drag-over-target');
+          const targetId = item.dataset.trackId;
+          if (!draggedId || !targetId || draggedId === targetId) return;
+          const fromIdx = state.tracks.findIndex((t) => t.id === draggedId);
+          const toIdx = state.tracks.findIndex((t) => t.id === targetId);
+          if (fromIdx === -1 || toIdx === -1) return;
+          const [moved] = state.tracks.splice(fromIdx, 1);
+          state.tracks.splice(toIdx, 0, moved);
+          persistTrackOrder();
+        });
+      });
+    }
 
     container.querySelectorAll('.js-set-featured').forEach((btn) => {
       btn.addEventListener('click', async () => {

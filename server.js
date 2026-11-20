@@ -653,6 +653,34 @@ const server = http.createServer(async (req, res) => {
       return sendJson(res, 201, { track: newTrack });
     }
 
+    // Owner-only: Reorder tracks in archive
+    if (pathname === '/api/tracks-reorder' && req.method === 'PUT') {
+      if (!isOwnerAuthorized(req)) {
+        return sendJson(res, 403, { error: 'Изменение порядка треков доступно только автору' });
+      }
+      const body = await parseJsonBody(req);
+      const ids = Array.isArray(body.trackIds) ? body.trackIds : [];
+      if (!ids.length) {
+        return sendJson(res, 400, { error: 'Не передан порядок треков' });
+      }
+      const db = readDb();
+      const map = new Map(db.tracks.map((t) => [t.id, t]));
+      const reordered = [];
+      ids.forEach((id) => {
+        if (map.has(id)) {
+          reordered.push(map.get(id));
+          map.delete(id);
+        }
+      });
+      // Append any remaining tracks not in ids
+      for (const rest of map.values()) {
+        reordered.push(rest);
+      }
+      db.tracks = reordered;
+      writeDb(db);
+      return sendJson(res, 200, { tracks: db.tracks });
+    }
+
     // Owner-only: Update track (cover image, title, note, gear, etc.)
     if (pathname.startsWith('/api/tracks/') && !pathname.endsWith('/comments') && req.method === 'PUT') {
       if (!isOwnerAuthorized(req)) {
