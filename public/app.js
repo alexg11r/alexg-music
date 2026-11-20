@@ -82,6 +82,57 @@
     return state.tracks[0] || null;
   }
 
+  const OWNER_KEY_SHA256 = '0d0c93964e2d4a4810ac14c019c48268299482f4ac0493297c06fe321ba153b3';
+
+  async function sha256Hex(str) {
+    const buf = new TextEncoder().encode(str);
+    const hashBuf = await crypto.subtle.digest('SHA-256', buf);
+    return Array.from(new Uint8Array(hashBuf))
+      .map((b) => b.toString(16).padStart(2, '0'))
+      .join('');
+  }
+
+  async function verifyOwnerKeyValue(key) {
+    if (!key) return false;
+    try {
+      const res = await fetch('api/auth', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ key })
+      });
+      if (res.ok) return true;
+      if (res.status === 401) return false;
+    } catch {
+      // Static host (e.g. GitHub Pages)
+    }
+    const hash = await sha256Hex(key);
+    return hash === OWNER_KEY_SHA256;
+  }
+
+  function saveStaticOverride() {
+    try {
+      localStorage.setItem(
+        'alexg_static_db_override',
+        JSON.stringify({
+          profile: state.profile,
+          works: state.works,
+          tracks: state.tracks
+        })
+      );
+    } catch {
+      // ignore quota error
+    }
+  }
+
+  function fileToDataUrl(file) {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onload = () => resolve(reader.result);
+      reader.onerror = reject;
+      reader.readAsDataURL(file);
+    });
+  }
+
   function authHeaders(extra = {}) {
     return {
       ...extra,
@@ -90,17 +141,23 @@
   }
 
   async function uploadImageFileToServer(file) {
-    const res = await fetch(
-      `/api/upload-file?kind=cover&name=${encodeURIComponent(file.name)}`,
-      {
-        method: 'POST',
-        headers: authHeaders(),
-        body: file
+    try {
+      const res = await fetch(
+        `api/upload-file?kind=cover&name=${encodeURIComponent(file.name)}`,
+        {
+          method: 'POST',
+          headers: authHeaders(),
+          body: file
+        }
+      );
+      if (res.ok) {
+        const data = await res.json();
+        return data.url;
       }
-    );
-    if (!res.ok) throw new Error('Не удалось загрузить изображение');
-    const data = await res.json();
-    return data.url;
+    } catch {
+      // Static fallback
+    }
+    return await fileToDataUrl(file);
   }
 
   async function verifyStoredOwnerKey() {
@@ -108,20 +165,12 @@
       applyOwnerModeUI(false);
       return;
     }
-    try {
-      const res = await fetch('/api/auth', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ key: state.studioKey })
-      });
-      if (res.ok) {
-        applyOwnerModeUI(true);
-      } else {
-        state.studioKey = '';
-        localStorage.removeItem('alexg_studio_key');
-        applyOwnerModeUI(false);
-      }
-    } catch {
+    const ok = await verifyOwnerKeyValue(state.studioKey);
+    if (ok) {
+      applyOwnerModeUI(true);
+    } else {
+      state.studioKey = '';
+      localStorage.removeItem('alexg_studio_key');
       applyOwnerModeUI(false);
     }
   }
@@ -173,6 +222,14 @@
     } catch {
       const resFallback = await fetch('data/db.json');
       data = await resFallback.json();
+      try {
+        const localOverride = JSON.parse(localStorage.getItem('alexg_static_db_override') || 'null');
+        if (localOverride && localOverride.profile) {
+          data = localOverride;
+        }
+      } catch {
+        // ignore
+      }
     }
     state.profile = data.profile;
     state.works = data.works || [];
@@ -1217,12 +1274,8 @@
     document.getElementById('ownerAuthForm').addEventListener('submit', async (e) => {
       e.preventDefault();
       const key = document.getElementById('ownerKeyInput').value.trim();
-      const res = await fetch('/api/auth', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ key })
-      });
-      if (res.ok) {
+      const ok = await verifyOwnerKeyValue(key);
+      if (ok) {
         state.studioKey = key;
         localStorage.setItem('alexg_studio_key', key);
         authModal.classList.add('hidden');
@@ -1233,6 +1286,33 @@
         showToast('Неверный ключ автора');
       }
     });
+
+    // One-click publish to GitHub Pages button
+    const pubBtn = document.getElementById('publishGithubHeaderBtn');
+    if (pubBtn) {
+      pubBtn.addEventListener('click', async () => {
+        if (!state.isOwner) return;
+        const origText = pubBtn.textContent;
+        pubBtn.disabled = true;
+        pubBtn.textContent = '☁ Выгрузка на GitHub...';
+        try {
+          const res = await fetch('api/publish-github', {
+            method: 'POST',
+            headers: authHeaders()
+          });
+          if (res.ok) {
+            showToast('Изменения успешно выгружены на GitHub! Сайт в сети обновится через ~30 секунд');
+          } else {
+            showToast('Выгрузка напрямую доступна при запуске локального сервера (node server.js)');
+          }
+        } catch {
+          showToast('Выгрузка напрямую доступна при запуске локального сервера (node server.js)');
+        } finally {
+          pubBtn.disabled = false;
+          pubBtn.textContent = origText;
+        }
+      });
+    }
 
     // Author Cabinet Triggers & Tabs
     document.getElementById('openCabinetHeaderBtn').addEventListener('click', () => openAuthorCabinet('hero'));
@@ -1303,21 +1383,30 @@
           offers: state.cabinetOffers
         };
 
-        const res = await fetch('/api/profile', {
-          method: 'PUT',
-          headers: authHeaders({ 'Content-Type': 'application/json' }),
-          body: JSON.stringify(payload)
-        });
-
-        if (res.ok) {
-          const data = await res.json();
-          state.profile = data.profile;
-          document.getElementById('authorCabinetModal').classList.add('hidden');
-          renderProfileAndCraft();
-          showToast('Все изменения (фото, блоки и описание) сохранены!');
-        } else {
-          showToast('Ошибка сохранения: проверьте авторизацию');
+        let savedOnServer = false;
+        try {
+          const res = await fetch('api/profile', {
+            method: 'PUT',
+            headers: authHeaders({ 'Content-Type': 'application/json' }),
+            body: JSON.stringify(payload)
+          });
+          if (res.ok) {
+            const data = await res.json();
+            state.profile = data.profile;
+            savedOnServer = true;
+          }
+        } catch {
+          // Static fallback
         }
+
+        if (!savedOnServer) {
+          state.profile = { ...state.profile, ...payload };
+          saveStaticOverride();
+        }
+
+        document.getElementById('authorCabinetModal').classList.add('hidden');
+        renderProfileAndCraft();
+        showToast('Все изменения (фото, блоки и описание) сохранены!');
       } finally {
         saveBtn.disabled = false;
         saveBtn.textContent = 'Сохранить все изменения';

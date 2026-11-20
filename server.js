@@ -2,6 +2,7 @@ const http = require('http');
 const fs = require('fs');
 const path = require('path');
 const crypto = require('crypto');
+const { exec } = require('child_process');
 
 const PORT = process.env.PORT || 3000;
 const STUDIO_KEY = process.env.STUDIO_KEY || 'wN56r';
@@ -540,6 +541,24 @@ const server = http.createServer(async (req, res) => {
         return sendJson(res, 200, { ok: true });
       }
       return sendJson(res, 401, { error: 'Неверный ключ автора' });
+    }
+
+    // Owner-only: One-click Git commit & push to GitHub Pages
+    if (pathname === '/api/publish-github' && req.method === 'POST') {
+      if (!isOwnerAuthorized(req)) {
+        return sendJson(res, 403, { error: 'Доступно только автору' });
+      }
+      exec(
+        'git add -A && git diff-index --quiet HEAD || git commit -m "Update portfolio from Author Cabinet" && git push origin main',
+        { cwd: ROOT_DIR },
+        (err, stdout, stderr) => {
+          if (err) {
+            return sendJson(res, 500, { error: 'Ошибка выгрузки на GitHub', details: stderr || err.message });
+          }
+          return sendJson(res, 200, { ok: true, output: stdout });
+        }
+      );
+      return;
     }
 
     // Owner-only: Upload audio or image file
